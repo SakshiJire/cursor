@@ -1,0 +1,764 @@
+{
+	"info": {
+		"name": "Education ERP API Collection",
+		"description": "Complete API collection for Education ERP System with all endpoints and sample data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.success && response.data.token) {",
+									"        pm.collectionVariables.set('auth_token', response.data.token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mobile\": \"9876543211\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"mobile\": \"9876543299\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"teacher\",\n    \"institute_id\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Send OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mobile\": \"9876543211\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/send-otp",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "send-otp"]
+						}
+					}
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mobile\": \"9876543211\",\n    \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/verify-otp",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "verify-otp"]
+						}
+					}
+				},
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Student Management",
+			"item": [
+				{
+					"name": "List Students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/students?per_page=10&class_id=5",
+							"host": ["{{base_url}}"],
+							"path": ["students"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10"
+								},
+								{
+									"key": "class_id",
+									"value": "5"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Student",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Smith\",\n    \"email\": \"jane.smith@parent.com\",\n    \"mobile\": \"9876543298\",\n    \"password\": \"password123\",\n    \"date_of_birth\": \"2015-05-15\",\n    \"gender\": \"female\",\n    \"class_id\": 5,\n    \"father_name\": \"Michael Smith\",\n    \"mother_name\": \"Sarah Smith\",\n    \"father_phone\": \"9876543297\",\n    \"address\": \"123 Main Street\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"pincode\": \"400001\",\n    \"transport_required\": \"no\",\n    \"hostel_required\": \"no\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/students",
+							"host": ["{{base_url}}"],
+							"path": ["students"]
+						}
+					}
+				},
+				{
+					"name": "Get Student Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/students/1",
+							"host": ["{{base_url}}"],
+							"path": ["students", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Student",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"father_phone\": \"9876543296\",\n    \"blood_group\": \"O+\",\n    \"transport_required\": \"yes\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/students/1",
+							"host": ["{{base_url}}"],
+							"path": ["students", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Students by Class",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/students/class/5",
+							"host": ["{{base_url}}"],
+							"path": ["students", "class", "5"]
+						}
+					}
+				},
+				{
+					"name": "Bulk Promote Students",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_ids\": [1, 2],\n    \"new_class_id\": 6\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/students/bulk-promote",
+							"host": ["{{base_url}}"],
+							"path": ["students", "bulk-promote"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Fee Management",
+			"item": [
+				{
+					"name": "Get Fee Structures",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/fees/structures?class_id=5",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "structures"],
+							"query": [
+								{
+									"key": "class_id",
+									"value": "5"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Fee Structure",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"class_id\": 5,\n    \"fee_type\": \"Computer Fee\",\n    \"amount\": 1500,\n    \"frequency\": \"yearly\",\n    \"due_date\": \"2024-04-30\",\n    \"late_fee\": 100,\n    \"grace_period_days\": 7,\n    \"description\": \"Annual computer lab fee\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/fees/structures",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "structures"]
+						}
+					}
+				},
+				{
+					"name": "Record Fee Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id\": 1,\n    \"fee_structure_id\": 2,\n    \"amount_paid\": 6250,\n    \"payment_method\": \"cash\",\n    \"payment_date\": \"2024-03-15\",\n    \"remarks\": \"Monthly tuition fee payment\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/fees/payments",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "payments"]
+						}
+					}
+				},
+				{
+					"name": "Get Student Fees",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/fees/student/1",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "student", "1"]
+						}
+					}
+				},
+				{
+					"name": "Generate Receipt",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/fees/receipt/1",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "receipt", "1"]
+						}
+					}
+				},
+				{
+					"name": "Fee Collection Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/fees/collection-report?date_from=2024-03-01&date_to=2024-03-31",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "collection-report"],
+							"query": [
+								{
+									"key": "date_from",
+									"value": "2024-03-01"
+								},
+								{
+									"key": "date_to",
+									"value": "2024-03-31"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Process Online Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"student_id\": 1,\n    \"fee_structure_id\": 2,\n    \"amount\": 6250\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/fees/online-payment",
+							"host": ["{{base_url}}"],
+							"path": ["fees", "online-payment"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Institute Management",
+			"item": [
+				{
+					"name": "List Institutes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/institutes",
+							"host": ["{{base_url}}"],
+							"path": ["institutes"]
+						}
+					}
+				},
+				{
+					"name": "Create Institute",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Academy\",\n    \"type\": \"school\",\n    \"code\": \"NA\",\n    \"address\": \"456 New Street\",\n    \"city\": \"Delhi\",\n    \"state\": \"Delhi\",\n    \"pincode\": \"110002\",\n    \"phone\": \"+91-9876543213\",\n    \"email\": \"admin@newacademy.edu\",\n    \"website\": \"https://newacademy.edu\",\n    \"description\": \"New educational institution\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/institutes",
+							"host": ["{{base_url}}"],
+							"path": ["institutes"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Class Management",
+			"item": [
+				{
+					"name": "List Classes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/classes",
+							"host": ["{{base_url}}"],
+							"path": ["classes"]
+						}
+					}
+				},
+				{
+					"name": "Create Class",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Class 6\",\n    \"section\": \"A\",\n    \"capacity\": 35,\n    \"annual_fee\": 80000,\n    \"description\": \"Class 6 Section A\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/classes",
+							"host": ["{{base_url}}"],
+							"path": ["classes"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Attendance Management",
+			"item": [
+				{
+					"name": "Mark Attendance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attendance_data\": [\n        {\n            \"user_id\": 8,\n            \"class_id\": 5,\n            \"date\": \"2024-03-15\",\n            \"status\": \"present\",\n            \"check_in_time\": \"08:30:00\",\n            \"remarks\": \"On time\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/attendance/mark",
+							"host": ["{{base_url}}"],
+							"path": ["attendance", "mark"]
+						}
+					}
+				},
+				{
+					"name": "Get Class Attendance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/attendance/class/5/date/2024-03-15",
+							"host": ["{{base_url}}"],
+							"path": ["attendance", "class", "5", "date", "2024-03-15"]
+						}
+					}
+				},
+				{
+					"name": "Get Student Attendance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/attendance/student/1?month=3&year=2024",
+							"host": ["{{base_url}}"],
+							"path": ["attendance", "student", "1"],
+							"query": [
+								{
+									"key": "month",
+									"value": "3"
+								},
+								{
+									"key": "year",
+									"value": "2024"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Exam Management",
+			"item": [
+				{
+					"name": "List Exams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/exams",
+							"host": ["{{base_url}}"],
+							"path": ["exams"]
+						}
+					}
+				},
+				{
+					"name": "Create Exam",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Mid Term Exam\",\n    \"type\": \"mid_term\",\n    \"description\": \"Mid term examination for all classes\",\n    \"start_date\": \"2024-04-15\",\n    \"end_date\": \"2024-04-25\",\n    \"start_time\": \"09:00:00\",\n    \"end_time\": \"12:00:00\",\n    \"duration_minutes\": 180\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/exams",
+							"host": ["{{base_url}}"],
+							"path": ["exams"]
+						}
+					}
+				},
+				{
+					"name": "Store Exam Results",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"results\": [\n        {\n            \"student_id\": 1,\n            \"subject_id\": 5,\n            \"marks_obtained\": 85,\n            \"max_marks\": 100,\n            \"grade\": \"A\",\n            \"status\": \"pass\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/exams/1/results",
+							"host": ["{{base_url}}"],
+							"path": ["exams", "1", "results"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "LMS",
+			"item": [
+				{
+					"name": "Get Learning Materials",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/lms/materials?class_id=5&subject_id=5",
+							"host": ["{{base_url}}"],
+							"path": ["lms", "materials"],
+							"query": [
+								{
+									"key": "class_id",
+									"value": "5"
+								},
+								{
+									"key": "subject_id",
+									"value": "5"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"class_id\": 5,\n    \"subject_id\": 5,\n    \"title\": \"Mathematics Assignment 1\",\n    \"description\": \"Complete exercises 1-10 from chapter 5\",\n    \"assigned_date\": \"2024-03-15T10:00:00\",\n    \"due_date\": \"2024-03-22T23:59:59\",\n    \"max_marks\": 50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/lms/assignments",
+							"host": ["{{base_url}}"],
+							"path": ["lms", "assignments"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Communication",
+			"item": [
+				{
+					"name": "Get Chats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/communication/chats",
+							"host": ["{{base_url}}"],
+							"path": ["communication", "chats"]
+						}
+					}
+				},
+				{
+					"name": "Create Chat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Class 5 Teachers\",\n    \"type\": \"group\",\n    \"participants\": [3, 6, 7]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/communication/chats",
+							"host": ["{{base_url}}"],
+							"path": ["communication", "chats"]
+						}
+					}
+				},
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\": \"Hello, this is a test message\",\n    \"message_type\": \"text\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/communication/chats/1/messages",
+							"host": ["{{base_url}}"],
+							"path": ["communication", "chats", "1", "messages"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Dashboard Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/dashboard",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "dashboard"]
+						}
+					}
+				},
+				{
+					"name": "Admission Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/admissions?year=2024",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "admissions"],
+							"query": [
+								{
+									"key": "year",
+									"value": "2024"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Fee Collection Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reports/fee-collection?month=3&year=2024",
+							"host": ["{{base_url}}"],
+							"path": ["reports", "fee-collection"],
+							"query": [
+								{
+									"key": "month",
+									"value": "3"
+								},
+								{
+									"key": "year",
+									"value": "2024"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
