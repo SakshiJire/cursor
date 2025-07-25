@@ -1,0 +1,1 @@
+import React from 'react'; import { Typography, Box } from '@mui/material'; const FeeManagement: React.FC = () => { return (<Box><Typography variant="h4" gutterBottom>Fee Management</Typography><Typography>Fee management functionality.</Typography></Box>); }; export default FeeManagement;

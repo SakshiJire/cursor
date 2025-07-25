@@ -1,0 +1,1 @@
+import React from 'react'; import { Typography, Box } from '@mui/material'; const LeaveManagement: React.FC = () => { return (<Box><Typography variant="h4" gutterBottom>Leave Management</Typography><Typography>Leave management functionality.</Typography></Box>); }; export default LeaveManagement;

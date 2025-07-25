@@ -1,0 +1,1 @@
+import React from 'react'; import { Typography, Box } from '@mui/material'; const SalaryManagement: React.FC = () => { return (<Box><Typography variant="h4" gutterBottom>Salary Management</Typography><Typography>Salary management functionality.</Typography></Box>); }; export default SalaryManagement;

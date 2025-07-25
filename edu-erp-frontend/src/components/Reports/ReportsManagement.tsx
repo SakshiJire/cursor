@@ -1,0 +1,1 @@
+import React from 'react'; import { Typography, Box } from '@mui/material'; const ReportsManagement: React.FC = () => { return (<Box><Typography variant="h4" gutterBottom>Reports Management</Typography><Typography>Reports management functionality.</Typography></Box>); }; export default ReportsManagement;
