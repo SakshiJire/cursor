@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h2><i class="fas fa-comments"></i> Chat App</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            <div class="demo-accounts">
+                <h4>Demo Accounts:</h4>
+                <div class="demo-account" data-email="admin@chatapi.com" data-password="password">
+                    <strong>Admin:</strong> admin@chatapi.com / password
+                </div>
+                <div class="demo-account" data-email="staff1@chatapi.com" data-password="password">
+                    <strong>Staff:</strong> staff1@chatapi.com / password
+                </div>
+                <div class="demo-account" data-email="student1@chatapi.com" data-password="password">
+                    <strong>Student:</strong> student1@chatapi.com / password
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div id="chatInterface" class="chat-container" style="display: none;">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span id="currentUserName">User</span>
+                <span id="currentUserRole" class="user-role">Role</span>
+            </div>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn-icon" title="Refresh">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button id="logoutBtn" class="btn-icon" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="chat-main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="chats">
+                        <i class="fas fa-comments"></i> Chats
+                    </button>
+                    <button class="tab-btn" data-tab="groups" id="groupsTab">
+                        <i class="fas fa-users"></i> Groups
+                    </button>
+                </div>
+
+                <!-- Chats Tab -->
+                <div class="tab-content active" id="chatsTab">
+                    <div class="search-box">
+                        <input type="text" id="searchChats" placeholder="Search chats...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div id="chatsList" class="chats-list">
+                        <!-- Chat previews will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Groups Tab -->
+                <div class="tab-content" id="groupsTabContent">
+                    <div class="groups-header">
+                        <h3>Groups</h3>
+                        <button id="createGroupBtn" class="btn-icon admin-only" title="Create Group" style="display: none;">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="groupsList" class="groups-list">
+                        <!-- Groups will be loaded here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="chat-area">
+                <div id="welcomeScreen" class="welcome-screen">
+                    <i class="fas fa-comments"></i>
+                    <h2>Welcome to Chat App</h2>
+                    <p>Select a chat or group to start messaging</p>
+                </div>
+
+                <div id="chatWindow" class="chat-window" style="display: none;">
+                    <div class="chat-window-header">
+                        <div class="chat-info">
+                            <h3 id="chatTitle">Chat Title</h3>
+                            <p id="chatStatus">Status</p>
+                        </div>
+                        <div class="chat-actions">
+                            <button id="searchMessagesBtn" class="btn-icon" title="Search Messages">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button id="chatMenuBtn" class="btn-icon" title="Menu">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="messagesContainer" class="messages-container">
+                        <!-- Messages will be loaded here -->
+                    </div>
+
+                    <div class="message-input-container">
+                        <form id="messageForm" class="message-form">
+                            <div class="file-upload">
+                                <input type="file" id="fileInput" multiple accept="image/*,application/pdf,.doc,.docx">
+                                <label for="fileInput" class="btn-icon" title="Attach File">
+                                    <i class="fas fa-paperclip"></i>
+                                </label>
+                            </div>
+                            <input type="text" id="messageInput" placeholder="Type a message..." required>
+                            <button type="submit" class="btn-send">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Group</h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="createGroupForm">
+                <div class="form-group">
+                    <label>Group Name</label>
+                    <input type="text" id="groupName" required>
+                </div>
+                <div class="form-group">
+                    <label>Select Members</label>
+                    <div id="usersList" class="users-list">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn-primary">Create Group</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Messages Modal -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Search Messages</h3>
+                <button class="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-form">
+                <input type="text" id="searchKeyword" placeholder="Enter keyword to search...">
+                <button id="searchBtn" class="btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <div id="searchResults" class="search-results">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

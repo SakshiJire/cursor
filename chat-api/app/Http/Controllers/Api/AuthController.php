@@ -19,7 +19,8 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        // Middleware is handled by routes, so this constructor can be empty
+        // or we can remove it entirely
     }
 
     /**
@@ -58,7 +59,7 @@ class AuthController extends Controller
             ], 500);
         }
 
-        $user = auth()->user();
+        $user = JWTAuth::user();
 
         return response()->json([
             'success' => true,
@@ -66,7 +67,7 @@ class AuthController extends Controller
             'data' => [
                 'access_token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
+                'expires_in' => config('jwt.ttl', 60) * 60,
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,
@@ -114,7 +115,7 @@ class AuthController extends Controller
             'data' => [
                 'access_token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
+                'expires_in' => config('jwt.ttl', 60) * 60,
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,
@@ -181,7 +182,7 @@ class AuthController extends Controller
      */
     public function userProfile()
     {
-        $user = auth()->user();
+        $user = auth('api')->user();
         
         return response()->json([
             'success' => true,
@@ -221,7 +222,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $user = auth()->user();
+        $user = auth('api')->user();
         $updateData = [];
 
         if ($request->has('name')) {

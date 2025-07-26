@@ -22,7 +22,7 @@ class AdminMiddleware
             ], 401);
         }
 
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Access denied. Admin privileges required.'

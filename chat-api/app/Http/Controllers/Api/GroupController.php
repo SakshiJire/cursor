@@ -14,7 +14,7 @@ class GroupController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // Middleware is handled by routes
     }
 
     /**
@@ -23,7 +23,7 @@ class GroupController extends Controller
     public function createGroup(Request $request)
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can create groups'
@@ -151,7 +151,7 @@ class GroupController extends Controller
     public function addUsersToGroup(Request $request, $groupId)
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can add users to groups'
@@ -224,7 +224,7 @@ class GroupController extends Controller
     public function removeUserFromGroup(Request $request, $groupId)
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can remove users from groups'
@@ -300,7 +300,7 @@ class GroupController extends Controller
     public function updateGroup(Request $request, $groupId)
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can update groups'
@@ -359,7 +359,7 @@ class GroupController extends Controller
     public function deleteGroup($groupId)
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can delete groups'
@@ -444,7 +444,7 @@ class GroupController extends Controller
     public function getAvailableUsers()
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can view available users'
@@ -470,7 +470,7 @@ class GroupController extends Controller
     public function getAllGroups()
     {
         // Check if user is admin
-        if (!auth()->user()->isAdmin()) {
+        if (!auth('api')->user()->isAdmin()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only admins can view all groups'
