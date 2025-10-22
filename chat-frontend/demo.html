@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat API Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .demo-accounts {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .demo-account {
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            margin: 2px 0;
+        }
+        .demo-account:hover {
+            background: #e9ecef;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Chat Application Demo</h1>
+        
+        <div class="demo-accounts">
+            <h3>Demo Accounts (Click to Auto-fill)</h3>
+            <div class="demo-account" onclick="setCredentials('admin@chatapi.com', 'password')">
+                <strong>👑 Admin:</strong> admin@chatapi.com / password
+            </div>
+            <div class="demo-account" onclick="setCredentials('staff1@chatapi.com', 'password')">
+                <strong>👨‍💼 Staff:</strong> staff1@chatapi.com / password
+            </div>
+            <div class="demo-account" onclick="setCredentials('student1@chatapi.com', 'password')">
+                <strong>🎓 Student:</strong> student1@chatapi.com / password
+            </div>
+            <div class="demo-account" onclick="setCredentials('parent1@chatapi.com', 'password')">
+                <strong>👨‍👩‍👧‍👦 Parent:</strong> parent1@chatapi.com / password
+            </div>
+        </div>
+
+        <div>
+            <h3>🔐 Authentication Test</h3>
+            <input type="email" id="email" placeholder="Email" value="admin@chatapi.com">
+            <input type="password" id="password" placeholder="Password" value="password">
+            <button onclick="testLogin()">Login</button>
+            <button onclick="testLogout()">Logout</button>
+        </div>
+
+        <div id="authStatus" class="status info">Ready to test authentication</div>
+
+        <div>
+            <h3>💬 Chat Features Test</h3>
+            <button onclick="loadChatPreviews()">Load Chat Previews</button>
+            <button onclick="loadGroups()">Load Groups</button>
+            <button onclick="sendTestMessage()">Send Test Message</button>
+            <button onclick="searchMessages()">Search Messages</button>
+            <br><br>
+            <input type="text" id="messageText" placeholder="Test message" value="Hello from demo!">
+            <select id="receiverId">
+                <option value="">Select recipient...</option>
+                <option value="2">Staff User</option>
+                <option value="3">Student User</option>
+                <option value="4">Parent User</option>
+            </select>
+        </div>
+
+        <div id="chatStatus" class="status info">Login first to test chat features</div>
+
+        <div>
+            <h3>📊 API Response</h3>
+            <pre id="response">API responses will appear here...</pre>
+        </div>
+
+        <div>
+            <h3>🔗 Quick Links</h3>
+            <p>
+                <a href="/" target="_blank">🚀 Full Chat Application</a> |
+                <a href="/README.md" target="_blank">📖 Documentation</a>
+            </p>
+            <p><strong>API Status:</strong> <span id="apiStatus">Checking...</span></p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000/api';
+        let authToken = null;
+        let currentUser = null;
+
+        // Update response display
+        function updateResponse(data, type = 'info') {
+            document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Update status
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+
+        // Set credentials
+        function setCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+        }
+
+        // Test API connection
+        async function testApiConnection() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/test`);
+                const data = await response.json();
+                document.getElementById('apiStatus').textContent = '✅ Connected';
+                document.getElementById('apiStatus').style.color = 'green';
+                return true;
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = '❌ Disconnected';
+                document.getElementById('apiStatus').style.color = 'red';
+                return false;
+            }
+        }
+
+        // Test login
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                updateResponse(data);
+
+                if (data.success) {
+                    authToken = data.data.access_token;
+                    currentUser = data.data.user;
+                    updateStatus('authStatus', `✅ Logged in as ${currentUser.name} (${currentUser.role})`, 'success');
+                    updateStatus('chatStatus', 'Ready to test chat features!', 'success');
+                } else {
+                    updateStatus('authStatus', `❌ Login failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('authStatus', `❌ Login error: ${error.message}`, 'error');
+                updateResponse({ error: error.message });
+            }
+        }
+
+        // Test logout
+        async function testLogout() {
+            if (!authToken) {
+                updateStatus('authStatus', '⚠️ Not logged in', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                updateResponse(data);
+
+                authToken = null;
+                currentUser = null;
+                updateStatus('authStatus', '✅ Logged out successfully', 'info');
+                updateStatus('chatStatus', 'Login first to test chat features', 'info');
+            } catch (error) {
+                updateStatus('authStatus', `❌ Logout error: ${error.message}`, 'error');
+                updateResponse({ error: error.message });
+            }
+        }
+
+        // Load chat previews
+        async function loadChatPreviews() {
+            if (!authToken) {
+                updateStatus('chatStatus', '⚠️ Please login first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/chat/previews`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                updateResponse(data);
+                updateStatus('chatStatus', `✅ Loaded ${data.data?.length || 0} chat previews`, 'success');
+            } catch (error) {
+                updateStatus('chatStatus', `❌ Error loading chats: ${error.message}`, 'error');
+                updateResponse({ error: error.message });
+            }
+        }
+
+        // Load groups
+        async function loadGroups() {
+            if (!authToken) {
+                updateStatus('chatStatus', '⚠️ Please login first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/groups/my-groups`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                updateResponse(data);
+                updateStatus('chatStatus', `✅ Loaded ${data.data?.length || 0} groups`, 'success');
+            } catch (error) {
+                updateStatus('chatStatus', `❌ Error loading groups: ${error.message}`, 'error');
+                updateResponse({ error: error.message });
+            }
+        }
+
+        // Send test message
+        async function sendTestMessage() {
+            if (!authToken) {
+                updateStatus('chatStatus', '⚠️ Please login first', 'error');
+                return;
+            }
+
+            const receiverId = document.getElementById('receiverId').value;
+            const message = document.getElementById('messageText').value;
+
+            if (!receiverId || !message) {
+                updateStatus('chatStatus', '⚠️ Please select recipient and enter message', 'error');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('receiver_id', receiverId);
+                formData.append('message', message);
+
+                const response = await fetch(`${API_BASE_URL}/chat/send-private`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                updateResponse(data);
+
+                if (data.success) {
+                    updateStatus('chatStatus', '✅ Message sent successfully!', 'success');
+                } else {
+                    updateStatus('chatStatus', `❌ Failed to send message: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('chatStatus', `❌ Error sending message: ${error.message}`, 'error');
+                updateResponse({ error: error.message });
+            }
+        }
+
+        // Search messages
+        async function searchMessages() {
+            if (!authToken) {
+                updateStatus('chatStatus', '⚠️ Please login first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/chat/search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ keyword: 'hello' })
+                });
+
+                const data = await response.json();
+                updateResponse(data);
+                updateStatus('chatStatus', `✅ Found ${data.data?.length || 0} messages`, 'success');
+            } catch (error) {
+                updateStatus('chatStatus', `❌ Error searching: ${error.message}`, 'error');
+                updateResponse({ error: error.message });
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            testApiConnection();
+        };
+    </script>
+</body>
+</html>
