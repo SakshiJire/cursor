@@ -1,0 +1,1 @@
+import React from 'react'; import { Typography, Box } from '@mui/material'; const StudyMaterials: React.FC = () => { return (<Box><Typography variant="h4" gutterBottom>Learning Management System</Typography><Typography>LMS functionality for study materials, assignments, etc.</Typography></Box>); }; export default StudyMaterials;

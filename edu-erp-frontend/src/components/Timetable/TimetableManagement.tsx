@@ -1,0 +1,1 @@
+import React from 'react'; import { Typography, Box } from '@mui/material'; const TimetableManagement: React.FC = () => { return (<Box><Typography variant="h4" gutterBottom>Timetable Management</Typography><Typography>Timetable management functionality.</Typography></Box>); }; export default TimetableManagement;
